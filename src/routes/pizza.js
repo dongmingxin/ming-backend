@@ -6,8 +6,7 @@ const {
     addPizza,
     updatePizza,
     deletePizza,
-    addIngredient,
-    deleteIngredient
+    updateAvatar
 } = require('../controllers/pizza');
 
 router.get('/', getAllPizza);
@@ -15,8 +14,6 @@ router.get('/:id', getPizza);
 router.post('/', addPizza);
 router.put('/:id', updatePizza);
 router.delete('/:id', deletePizza);
-router.post('/:id/ingredient/:code', addIngredient);
-router.delete('/:id/ingredient/:code', deleteIngredient);
-
+router.put('/:id/avatar', updateAvatar);
 
 module.exports = router;

@@ -78,6 +78,20 @@ async function removeInboxMail(req, res) {
     return res.json(mail)
 }
 
+async function updateAvatar(req, res) {
+    const { id } = req.params;
+    const { avatar } = req.body;
+    const staff = await staffModel.findByIdAndUpdate(id, {
+        avatar
+    });
+    if(!staff) {
+        return res.status(404).json('Image missing'); 
+    }
+
+    return res.json(staff)
+}
+
+
 
 module.exports = {
     getStaff,
@@ -87,4 +101,5 @@ module.exports = {
     deleteStaff,
     createInboxMail,
     removeInboxMail,
+    updateAvatar,
 }

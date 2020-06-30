@@ -1,16 +1,15 @@
 const {pizzaModel, validate } = require('../model/pizza');
-const {ingredientModel} = require('../model/ingredient');
 
 
 async function getAllPizza(req,res) {
-    const pizzas = await pizzaModel.find().populate('ingredients', 'name -_id')
+    const pizzas = await pizzaModel.find()
     res.json(pizzas)
 
 }
 
 async function getPizza(req,res) {
-    const pizza = await pizzaModel.findById(req.params.id).populate('ingredients', 'name -_id')
-    if(!pizza) return res.status(404).json('The ingredient with given ID not found');
+    const pizza = await pizzaModel.findById(req.params.id)
+    if(!pizza) return res.status(404).json('The Pizza not found');
     return res.json(pizza)
 }
 
@@ -18,9 +17,11 @@ async function addPizza(req,res) {
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message)
 
-    const {name} = req.body
+    const {name, price, calorie} = req.body
     const newPizza = new pizzaModel({
-        name
+        name,
+        price,
+        calorie
     })
     const result = await newPizza.save()
     res.json(result)
@@ -30,13 +31,15 @@ async function updatePizza(req,res) {
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);
 
-    const {name} = req.body;
+    const {name, price, calorie} = req.body;
     const pizza = await pizzaModel.findByIdAndUpdate(req.params.id, {
-        name
+        name,
+        price,
+        calorie
     },{new: true});
 
     if (!pizza) {
-        return res.status(404).json("ingredient ID not found")
+        return res.status(404).json("Pizza is not found")
     };
 
     return res.json(pizza);
@@ -44,34 +47,23 @@ async function updatePizza(req,res) {
 
 async function deletePizza(req,res) {
     const pizza = await pizzaModel.findByIdAndDelete(req.params.id)
-    if(!pizza) return res.status(404).json('The pizza with given ID not found');
+    if(!pizza) return res.status(404).json('The pizza  not found');
     await pizzaModel.updateMany(
         {_id:{$in: pizza.ingredients}},
     )
     return res.json(pizza)
 }
 
-async function addIngredient(req, res) {
-    const { id, code } = req.params
-    const pizza = await pizzaModel.findById(id);
-    const ingredient = await ingredientModel.findById(code);
-    if (!pizza || !ingredient ) {
-        return res.status(404).json('pizza or ingredient not found');
+async function updateAvatar(req, res) {
+    const { id } = req.params;
+    const { avatar } = req.body;
+    const pizza = await pizzaModel.findByIdAndUpdate(id, {
+        avatar
+    });
+    if(!pizza) {
+        return res.status(404).json('Image missing'); 
     }
-    pizza.ingredients.addToSet(ingredient._id)
-    await pizza.save();
-    return res.json(pizza)
-}
 
-async function deleteIngredient(req, res) {
-    const { id, code } = req.params
-    const pizza = await pizzaModel.findById(id);
-    const ingredient = await ingredientModel.findById(code);
-    if (!pizza || !ingredient ) {
-        return res.status(404).json('pizza or ingredient not found');
-    }
-    pizza.ingredients.pull(ingredient._id);
-    await pizza.save();
     return res.json(pizza)
 }
 
@@ -81,6 +73,5 @@ module.exports = {
     addPizza,
     updatePizza,
     deletePizza,
-    addIngredient,
-    deleteIngredient
+    updateAvatar
 }

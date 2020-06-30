@@ -8,6 +8,7 @@ const {
     deleteStaff,
     createInboxMail,
     removeInboxMail,
+    updateAvatar,
 } = require('../controllers/staff');
 
 router.get('/', getAllStaff);
@@ -17,6 +18,6 @@ router.put('/:id', updateStaff);
 router.delete('/:id', deleteStaff);
 router.post('/:id/mail', createInboxMail);
 router.delete('/:id/mail/:mailId', removeInboxMail);
-
+router.put('/:id/avatar', updateAvatar);
 
 module.exports = router;

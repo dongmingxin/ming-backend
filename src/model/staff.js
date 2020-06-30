@@ -22,6 +22,13 @@ const schema = new mongoose.Schema({
         required: true
     },
     inboxMails: [inboxMailSchema],
+    avatar:{
+        type: String,
+        validate: {
+            validator: url => !Joi.validate(url, Joi.string().uri()).error,
+            msg: 'Invalid url format'
+        }
+    },
     isAdmin: Boolean
 })
 
