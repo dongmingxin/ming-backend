@@ -48,9 +48,6 @@ async function updatePizza(req,res) {
 async function deletePizza(req,res) {
     const pizza = await pizzaModel.findByIdAndDelete(req.params.id)
     if(!pizza) return res.status(404).json('The pizza  not found');
-    await pizzaModel.updateMany(
-        {_id:{$in: pizza.ingredients}},
-    )
     return res.json(pizza)
 }
 
